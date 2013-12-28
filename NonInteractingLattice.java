@@ -5,32 +5,31 @@ package spin-glass;
  *  @author Andrew Berger*/
 public class NonInteractingLattice extends Lattice {
 
-    NonInteractingLattice(Lattice predecessor) {
+    /** A new non-interacting lattice with NUMSPINS.
+     *  Initially all spins set to -1. */
+    NonInteractingLattice(int numSpins, Lattice predecessor) {
         _predecessor = predecessor;
         _weights = new Weighting(predecessor, this);
+        _size = numSpins;
+        _lattice = new Spin[numSpins];
+        for (int i = 0; i < numSpins; i++) {
+            _lattice[i] = new Spin(false);
+        }
+        _rand = new Random();
     }
 
-    /** Fully deterministic spin updater.
-     *  Always settles into a local min. */
-    public void zeroTempSpinUpdate(int ind) {
-        double sum = 0;
-        for (int i = 0; i < predecessor.latticeSize(); i++) {
-            sum += _weights[i][ind] * predecessor.getSpin(ind);
-        }
-        if (sum > getThreshold(ind)) {
-            setSpin(ind, true);
-        } else {
-            setSpin(ind, false);
+    @Override 
+    public void converge() {
+        for (int i = 0; i < latticeSize(); i++) {
+            updateSpin(ind);
         }
     }
 
-    /** Result of E(spin at ind = -1) - E(spin at ind = 1) */
-    private double energyDiff(int ind) {
-        double e = 0;
-        /* This is what i was implementing here */
-        /*http://en.wikipedia.org/wiki/Boltzmann_machine#Probability_of_a_unit.27s_state*/
+    @Override
+    public Lattice predecessor() {
+        return _predecessor;
     }
+
     
     private Lattice _predecessor;
-
 }
