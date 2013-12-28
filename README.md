@@ -1,11 +1,16 @@
 spin-glass
 ==========
 
-Physics-centric Hopfield network implementation
+Physics-centric Boltzmann machine implementation (under active development)
+
+Supports recurrent (Hopfield) and feed-forward network topologies (RBM)
+
+Updated asynchronously. 
+
+Supports simulated annealing (physics-centric implementation lends itself to this naturally)
 
 
-Will support recurrent and feed-forward network topologies (RBM)
 
-Networks updated asynchronously (by layer)
-
-Plans of eventually building in  Minimum Probability Flow learning
+In the works:
+   -Minimum Probability Flow learning 
+   -Class for managing and constructing networks
