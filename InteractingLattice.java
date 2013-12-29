@@ -1,5 +1,7 @@
 package spin-glass;
 
+import java.util.BitSet;
+
 /** A lattice of interacting spins.
  *  AKA a hopfield network
  *  @author Andrew Berger */
@@ -15,16 +17,46 @@ public class InteractingLattice extends Lattice {
             _lattice[i] = new Spin(false);
         }
         _rand = new Random();
+        _updateSpins = new BitSet();
     }
     
     @Override 
     public void converge() {
-        /*some rethinking is needed here 
-          At zero temperature it would be sufficient to 
-          continue updating at random until we are reasonably sure
-          a local min has been reached. 
-          At non-zero temperature a similar strategy is not gauranteed to
-          settle into a minimum. */
+        if (_setTemperature == 0) {
+            descendGradient();
+        }
+    }
+
+
+    /** Deterministically updates a random spin.
+     *  Keeps track of already updated spins
+     *  Halts when we are guaranteed to have reached a fixed point */
+    private void descendGradient() {
+        long repr = representation();
+        int spin = randSpin();
+        do {
+            zeroTempSpinUpdate(spin);
+            if (representation() == repr) {
+                _updatedSpins.set(spin);
+            } else {
+                _updatedSpins.clear();
+                repr = representation();
+            }
+            spin = randSpin();
+        } while (spin != -1);
+        _updatedSpins.clear();
+    }
+
+    /** Returns an index to a random spin that hasn't been updated.
+     *  Returns -1 if there is no spin that hasn't been updated.
+     *  This solution is somewhat naive, but should be fast enough. */
+    private int randSpin() {
+        int start = _rand.nextInt(latticeSize());
+        int closest = _updatedSpins.nextClearBit(start);
+        if (closest == -1) {
+            closest = _updatedSpins.previousClearBit(start);
+        }
+        return closest; 
     }
 
     @Override
@@ -32,5 +64,6 @@ public class InteractingLattice extends Lattice {
         return this;
     }
 
+    private BitSet _updatedSpins;
 
 }
