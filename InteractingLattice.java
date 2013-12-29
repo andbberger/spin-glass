@@ -24,9 +24,23 @@ public class InteractingLattice extends Lattice {
     public void converge() {
         if (_setTemperature == 0) {
             descendGradient();
+        } else {
+            anneal();
         }
     }
 
+    /** Gradually lowers temperature while updating spins randomly.
+     *  Calls descendGradient when zero temperature is reached. 
+     *  Annealing rule is currently a simple constant decrement per update. 
+     *  Much more sophisticated annealing rules possible.*/
+    private void anneal() {
+        while (_temperature > 0) {
+            boltzmannSpinUpdate(randSpin());
+            _temperature -= ANNEAL_DECR;
+        }
+        _temperature = _setTemperature;
+        descendGradient();
+    }
 
     /** Deterministically updates a random spin.
      *  Keeps track of already updated spins
@@ -63,7 +77,11 @@ public class InteractingLattice extends Lattice {
     public Lattice predecessor() {
         return this;
     }
-
+    
+    /** Keeps track of spins we have already updated.*/
     private BitSet _updatedSpins;
+    /** Amount by which temperature is decremented at each update step*/
+    private static final int ANNEAL_DECR == .1
+
 
 }
