@@ -12,5 +12,7 @@ Supports simulated annealing (physics-centric implementation lends itself to thi
 
 
 In the works:
-   -Minimum Probability Flow learning 
+
+   -Minimum Probability Flow learning
+   
    -Class for managing and constructing networks
