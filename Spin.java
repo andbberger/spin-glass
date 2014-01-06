@@ -20,6 +20,11 @@ class Spin {
         return _activation;
     }
 
+    /** Returns 1 if activated, otherwise 0. */
+    public int getBool() {
+        return (_activation == 1) ? 1 : 0;
+    }
+
     /** Returns the value of my threshold. */
     public int getThreshold() {
         return _threshold;

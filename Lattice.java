@@ -7,7 +7,12 @@ import java.util.Random;
  *  @author Andrew Berger*/
 abstract class Lattice {
 
-    /** Updates our lattice spin by spin until convergence is reached.*/
+    /** Updates this lattice.
+     *  If non-interacting, simply updates each spin at
+     *   the set temperature.
+     *  If interacting and non-zero temp, performs simulated annealing from the 
+     *   set temperature to zero.
+     *  If interacting at zero temp, Iterates until a fixed point is reached. */
     public abstract void converge();
 
     /** Returns the lattice that interacts with the lattice I implement. */
@@ -43,6 +48,27 @@ abstract class Lattice {
         _lattice[ind].set(activated);
     }
 
+    /** Constructs a long representing the lattice state.
+     *  Not a very good hash,important property is that 
+     *   one spin flip will always produce a different number.*/
+    public long representation() {
+        long repr = 0;
+        int currSpin = 0;
+        for (int k = 0; k < latticeSize(); k++ % 64) {
+            int bit = getSpin(currSpin) > 0 ? 1 : 0;
+            currSpin += 1;
+            repr ^= (bit << k);
+        }
+        return repr;
+    }
+
+    /** Setting TEMP to zero yields a fully deterministic lattice.
+     *  Otherwise uses a boltzmann distribution. */
+    public void setTemperature(double temp) {
+        _setTemperature = temp;
+        _temperature = temp;
+    }
+
     /** Fully deterministic spin updater.
      *  Always settles into a local min. */
     private void zeroTempSpinUpdate(int ind) {
@@ -73,6 +99,7 @@ abstract class Lattice {
      *  which is proportional to the temperature of the system
      *  In this way can 'tunnel' out of a local min. */
     private void boltzmannSpinUpdate(int ind) {
+        //double overflow to be wary of???
         double boltzmannFactor = Math.pow(Math.E, -(energyDiff(ind) / _temperature));
         double probOn = 1 / (1 + boltzmannFactor);
         if (_rand.nextDouble() <= probOn) {
@@ -88,6 +115,9 @@ abstract class Lattice {
      *  For temp > 0, the lattice has a probability to 'tunnel' out 
      *  of a local min*/
     private double _temperature;
+    /** Temperature which simulated annealing is started from 
+     *  and RBM update ran at. */
+    private double _setTemperature;
     /** The spins in this lattice.*/
     private Spin[] _lattice;
     /** The weights between spins in this lattice.*/
