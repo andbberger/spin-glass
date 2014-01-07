@@ -24,10 +24,26 @@ public class MPF {
         for (State obs : _observations) {
             State[] bitFlips = obs.generateBitFlips();
             for (State flip : bitFlips) {
-                _gamma.put(bitFlips, obs);
+                _gamma.put(bitFlips, obs); //val
             }
         }
     }
+
+    /** Returns the computed weighted value of an entry in gamma.
+     *  Namely the difference in energy from flipping bit N of STATE,
+     *  weighted as prescribed in the paper. */
+    private double bitFlippedEnergy(Lattice state, int n) {
+        double currEnergy = state.getEnergy();
+        int currSpin = state.getSpin(n);
+        double deltaE = state.energyDiff(n);
+        //SIGNS!!
+        if (n == 1) {
+            return currEnergy + deltaE;
+        } else {
+            return currEnergy - deltaE;
+        }
+    }
+        
 
 
     List<State> _observations;

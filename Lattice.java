@@ -43,6 +43,13 @@ abstract class Lattice {
         return _lattice[ind].getThreshold();
     }
 
+    public double getEnergy() {
+        if (!EnergySet) {
+            _energy = energy();
+        }
+        return _energy = energy;
+    }
+
     /** Sets the spin at IND to 1 iff ACTIVATED is true. */
     public void setSpin(int ind, boolean activated) {
         _lattice[ind].set(activated);
@@ -72,7 +79,7 @@ abstract class Lattice {
     /** Computes and stores the energy, which is subsequently only updated
      *  Through calls to the faster energy diff.*/
     public void setEnergy() {
-        _energy = energy;
+        _energy = energy();
     }
 
     /** Fully deterministic spin updater.
@@ -114,6 +121,7 @@ abstract class Lattice {
         for (int i = 0; i < latticeSize(); i++) {
             e += getThreshold(i);
         }
+        energySet = true;
         return e;
     }
 
