@@ -69,6 +69,12 @@ abstract class Lattice {
         _temperature = temp;
     }
 
+    /** Computes and stores the energy, which is subsequently only updated
+     *  Through calls to the faster energy diff.*/
+    public void setEnergy() {
+        _energy = energy;
+    }
+
     /** Fully deterministic spin updater.
      *  Always settles into a local min. */
     private void zeroTempSpinUpdate(int ind) {
@@ -91,6 +97,23 @@ abstract class Lattice {
         }
         // check the sign here
         e -= getThreshold(ind);
+        return e;
+    }    
+
+    /** Returns the total energy of this state. 
+     *  Call once and keep track of energy change with energyDiff,*/
+    private double energy() {
+        double e = 0;
+        for (int i = 0; i < predecessor().latticeSize(); i++) {
+            for (int j = 0; i < latticeSize(); j++) {
+                e -= _weights[i][j] * predecessor().getSpin(i) * getSpin(j); 
+            }
+        }
+        e = e / 2;
+        //not general, RBM sum over hidden layer too
+        for (int i = 0; i < latticeSize(); i++) {
+            e += getThreshold(i);
+        }
         return e;
     }
 
@@ -126,5 +149,8 @@ abstract class Lattice {
     private int _size;
     /** The PRNG. */
     private Random _rand; 
-
+    /** The current energy of the lattice. */
+    private double _energy;
+    /** True iff the energy has been computed. */
+    private boolean energySet = false;
 }

@@ -17,9 +17,14 @@ public class State {
         }
     }
 
+    State(long[] state) {
+        _state = state;
+    }
+
     /** Returns true iff COMP differs from the state I represent
      *  By only one bitFlip.
-     *  Throws an error if COMP is not of the same dimension as I.*/
+     *  Throws an error if COMP is not of the same dimension as I.
+     *  I think I'm an idiot and this method isn't even necessary*/
     public boolean isBitFlipped(State comp) {
         if (comp.size() != _size) {
             throw new StateException("States are of different dimensions");
@@ -39,6 +44,17 @@ public class State {
             }
         }
         return true;
+    }
+
+    public State[] generateBitFlips () { 
+        State[] bitFlips = new State[_size];
+        for (int ind = 0; ind < _state.length; ind++) {
+            for (int b = 0; b < 64; b++) {
+                _state[ind] ^= (1 << b);
+                bitFlips[ind*64 + b] = State(_state);
+                _state[ind] ^= (1 << b);
+            }
+        }
     }
 
     /** Very important routine
