@@ -125,6 +125,20 @@ abstract class Lattice {
         return e;
     }
 
+    /** Returns the derivative of the Energy with respect
+     *  To weight i j.
+     *  In the case of the boltzmann machine this takes the very simple
+     *  form -1/2 Si Sj */
+    public double dEdW(int i, int j) {
+        return (double) -.5 * predecessor().getSpin(i) * getSpin(j);
+    }
+
+    /** Given a GRADIENT corresponding to MPF eq 16,
+     *  Updates our weighting to a better value. */
+    public void updateWeights(double[][] gradient) {
+        _weights.gradientDescent(gradient, EPS);
+    }
+    
     /** Probabilistic spin updater.
      *  Has a probability to settle into a higher energy state,
      *  which is proportional to the temperature of the system

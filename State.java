@@ -21,30 +21,6 @@ public class State {
         _state = state;
     }
 
-    /** Returns true iff COMP differs from the state I represent
-     *  By only one bitFlip.
-     *  Throws an error if COMP is not of the same dimension as I.
-     *  I think I'm an idiot and this method isn't even necessary*/
-    public boolean isBitFlipped(State comp) {
-        if (comp.size() != _size) {
-            throw new StateException("States are of different dimensions");
-        }
-        long[] cState = comp.getState();
-        boolean findFlip = true;
-        for (int ind = 0; ind < _state.length; ind++) {
-            long masked = _state[ind] & cState[ind];
-            if (findFlip && masked != 0) {
-                if (isSingular(masked)) {
-                    findFlip = false;
-                } else {
-                    return false;
-                }
-            } else if (!findFlip && masked != 0) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     public State[] generateBitFlips () { 
         State[] bitFlips = new State[_size];
@@ -55,21 +31,6 @@ public class State {
                 _state[ind] ^= (1 << b);
             }
         }
-    }
-
-    /** Very important routine
-     *  Naive implementation with java library call
-     *  Deserving of some de bruijn magic*/
-    private static int bitscanLSD(long state) {
-        long lsb = state & -state;
-        return Long.numberOfTrailingZeroes(lsb);
-    }
-
-    /** Returns true iff there is only one bit turned on in MASKED.*/
-    private isSingular(long masked) {
-        int on = bitscanLSD(masked);
-        masked ^= (1 << on);
-        return masked == 0;
     }
 
     /** Returns my internal representation. */

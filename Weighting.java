@@ -39,6 +39,17 @@ public class Weighting {
         return _weights[i][j];
     }
 
+    /** GRADIENT is the (wrapped) vector given by eq 16 in the MPF paper
+     *  EPS the gradient step.
+     *  GRADIENT of same dimensions of _weights
+     *  Updates the weighting to a presumably better value. */
+    public void gradientDescent(double[][] gradient, double eps) {
+        for (int i = 0; i < _weights.length; i++) {
+            for (int j = 0; j < _weights[0].length; j++) {
+                _weights[i][j] -= eps * gradient[i][j]
+            }
+        }
+    }
 
     /** Matrix holding weights.
      *  Square and symmetric and (i, i) = 0 if isInteracting. */
