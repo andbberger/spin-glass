@@ -29,6 +29,14 @@ public class InteractingLattice extends Lattice {
         }
     }
 
+    /** Sets the spins in this glass to their corresponding
+     *  values in state. */
+    public void setSpins(State state) {
+        for (int i = 0; i < state.size(); i++) {
+            _lattice[i].set(state.getSpin(i));
+        }
+    }
+
     /** Gradually lowers temperature while updating spins randomly.
      *  Calls descendGradient when zero temperature is reached. 
      *  Annealing rule is currently a simple constant decrement per update. 

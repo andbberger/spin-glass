@@ -42,6 +42,16 @@ public class State {
     public double size() {
         _size;
     }
+
+    /** Returns the Ith spin*/
+    public boolean getSpin(int i) {
+        int j = i % 64;
+        //correct operator behavior?
+        int ind = i / 64;
+        double masked = _state[ind] & (1 << j);
+        return masked = (1 << j);
+    }
+
     
     /** Indexed by LSD */
     private long[] _state;

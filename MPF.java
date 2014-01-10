@@ -5,6 +5,8 @@ import java.util.List;
 /* To Do: 
    -write energy gradients in Lattice
    -write gradient descent 
+   -not sure explicit sparse matrix is necessary 
+   -really need static class to compute energy given state and weight
 */
 
 /** Class implementing Minimum Probability Flow learning
@@ -40,8 +42,18 @@ public class MPF {
         for (int i = 0; i < iSize; i++) {
             for (int j = 0; j < jSize; j++) {
                 //computing eq 16 
-                //the derivative I wrote earlier wasn't entirely correct.
-                //Would require having lattice object for every bit flip
+                
+            }
+        }
+    }
+
+    /** Computes the numerical derivative of MPF objective
+     *  func wrt weight n m. */
+    private double KLPartial(int n, int m) {
+        double partial;
+        for (State obs: _observations) {
+            for (int i = 0; i < _spinGlass.latticeSize(); i++) {
+                
             }
         }
     }
@@ -49,10 +61,11 @@ public class MPF {
     /** Returns the computed weighted value of an entry in gamma.
      *  Namely the difference in energy from flipping bit N of STATE,
      *  weighted as prescribed in the paper. */
-    private double computeEntry(Lattice state, int n) {
-        double energy = state.getEnergy();
-        int currSpin = state.getSpin(n);
-        double flipE = state.energyDiff(n);
+    private double computeEntry(State s, int n) {
+        _spinGlass.setSpins(s);
+        double energy = _spinGlass.getEnergy();
+        int currSpin = _spinGlass.getSpin(n);
+        double flipE = _spinGlass.energyDiff(n);
         double deltaE;
         //SIGNS!!
         if (currSpin == 1) {
@@ -64,7 +77,9 @@ public class MPF {
         return Math.pow(Math.E, deltaE);
     }
      
-    /** The lattice we are training.  */
+    /** The lattice we are training.  
+     *  Spins are frequently changed to compute energies, weights are
+     *  updated through gradient descent of MPF objective function. */
     Lattice _spinGlass;
     List<State> _observations;
     /** The transition probability matrix

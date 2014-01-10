@@ -2,6 +2,13 @@ package spin-glass;
 
 import java.util.Random;
 
+/* To Do:
+   -Energy computing code is a mess:
+       properly implemented it should only compute the full energy
+       when necessary and update that value with calls to energyDiff
+       with subsequent single spin flips. 
+ */
+
 /** A lattice of possibly interacting spins.
  *  Lattices are not resizable. 
  *  @author Andrew Berger*/
@@ -44,15 +51,26 @@ abstract class Lattice {
     }
 
     public double getEnergy() {
-        if (!EnergySet) {
-            _energy = energy();
-        }
-        return _energy = energy;
+        return _energy;
     }
 
     /** Sets the spin at IND to 1 iff ACTIVATED is true. */
     public void setSpin(int ind, boolean activated) {
         _lattice[ind].set(activated);
+    }
+    
+    /** Flips the spin at IND. 
+     *  Is own inverse operation. */
+    public void flipSpin(int ind) {
+        _lattice[ind].flip();
+    }
+
+    /** Sets the spins in this glass to their corresponding
+     *  values in state. */
+    public void setSpins(State state) {
+        for (int i = 0; i < state.size(); i++) {
+            _lattice[i].set(state.getSpin(i));
+        }
     }
 
     /** Constructs a long representing the lattice state.
@@ -107,6 +125,8 @@ abstract class Lattice {
         return e;
     }    
 
+    
+
     /** Returns the total energy of this state. 
      *  Call once and keep track of energy change with energyDiff,*/
     private double energy() {
@@ -133,6 +153,17 @@ abstract class Lattice {
         return (double) -.5 * predecessor().getSpin(i) * getSpin(j);
     }
 
+    /** Returns the differene between dEdW of current state
+     *  And dEdW of current state with Nth bit flipped.*/
+    public double bitFlippedPartial(int i, int j, int n) {
+        //there may exist a faster closed form expression for this
+        double init = dEdW(i, j);
+        flipSpin(n);
+        double fin = dEdW(i, j);
+        flipSpin(n);
+        return init - fin;
+    }
+    
     /** Given a GRADIENT corresponding to MPF eq 16,
      *  Updates our weighting to a better value. */
     public void updateWeights(double[][] gradient) {

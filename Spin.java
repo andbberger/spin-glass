@@ -15,6 +15,11 @@ class Spin {
         _activation = activated ? 1 : -1;
     }
 
+    /** Flips my spin. */
+    public void flip() {
+        _activation = _activation == 1 ? -1 : 1;
+    }
+
     /** Returns 1 if activated, otherwise -1.*/
     public int get() {
         return _activation;
