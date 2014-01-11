@@ -18,6 +18,18 @@ public class NonInteractingLattice extends Lattice {
         _rand = new Random();
     }
 
+    @Override
+    private double energyDiff(int ind) {
+        double e = 0;
+        for (int i = 0; i < predecessor().latticeSize() && i != ind; i++) {
+            e += _weights[i][ind] * predecessor().getSpin(i) 
+                + _weights[ind][i] * predecessor().getSpin(i);
+        }
+        e = e / 2;
+        e -= getThreshold(ind);
+        return e;
+    }
+
     @Override 
     public void converge() {
         for (int i = 0; i < latticeSize(); i++) {

@@ -42,7 +42,7 @@ public class MPF {
         for (int i = 0; i < iSize; i++) {
             for (int j = 0; j < jSize; j++) {
                 //computing eq 16 
-                
+               
             }
         }
     }

@@ -117,7 +117,7 @@ abstract class Lattice {
     /** Result of E(spin at ind = -1) - E(spin at ind = 1) */
     private double energyDiff(int ind) {
         double e = 0;
-        for (int i = 0; i < predecessor().latticeSize(); i++) {
+        for (int i = 0; i < predecessor().latticeSize() && i != ind; i++) {
             e += _weights[i][ind] * predecessor().getSpin(ind);
         }
         // check the sign here
