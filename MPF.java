@@ -20,6 +20,15 @@ public class MPF {
         _spinGlass = spinGlass;
     }
 
+    public void fit() {
+        populateGamma();
+        //step down gradient while we continue to improve
+    }
+
+    public Lattice getLattice() {
+        return _spinGlass;
+    }
+    
     /** Iterates through the obersations, filling gamma with an
      *  observation and it's bit flipped pairs.*/
     private void populateGamma() {
@@ -41,8 +50,7 @@ public class MPF {
         double[][] gradient = new double[iSize][jSize];
         for (int i = 0; i < iSize; i++) {
             for (int j = 0; j < jSize; j++) {
-                //computing eq 16 
-               
+                gradient[i][j] = KLPartial(i, j);           
             }
         }
     }
@@ -52,11 +60,16 @@ public class MPF {
     private double KLPartial(int n, int m) {
         double partial;
         for (State obs: _observations) {
+            State[] bitFlips = obs.generateBitFlips();
             for (int i = 0; i < _spinGlass.latticeSize(); i++) {
-                
+                partial += _spinGlass.bitFlippedPartial(n, m, i) 
+                    * _gamma.get(obs, bitFlips[i]);
             }
         }
+        return partial * (EPSILLON / _observations.length);        
     }
+
+    
 
     /** Returns the computed weighted value of an entry in gamma.
      *  Namely the difference in energy from flipping bit N of STATE,
