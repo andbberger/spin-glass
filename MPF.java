@@ -22,7 +22,12 @@ public class MPF {
 
     public void fit() {
         populateGamma();
-        //step down gradient while we continue to improve
+        double[i][j] gradient = KLGradient();
+        //or maybe while greater than some epsillon?
+        while (magnitude(gradient) != 0) {
+            _spinGlass.updateWeights(gradient);
+            gradient = KLGradient();
+        }
     }
 
     public Lattice getLattice() {
@@ -53,6 +58,17 @@ public class MPF {
                 gradient[i][j] = KLPartial(i, j);           
             }
         }
+    }
+
+    /** Returns the L2norm of the gradient vector.*/
+    private double magnitude(double[][] gradient) {
+        double mag;
+        for (int i = 0; i < gradient.length; i++) {
+            for (int j = 0; j < gradient[i].length; j++) {
+                mag += Math.pow(double[i][j], 2);
+            }
+        }
+        return mag;
     }
 
     /** Computes the numerical derivative of MPF objective
