@@ -1,4 +1,4 @@
-package spin-glass;
+package spin_glass;
 
 import java.util.BitSet;
 

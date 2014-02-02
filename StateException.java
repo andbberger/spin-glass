@@ -1,4 +1,4 @@
-package spin-glass;
+package spin_glass;
 
 /** An unchecked exception that represents internally any kind of
  *  state error.

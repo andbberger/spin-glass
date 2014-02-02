@@ -1,4 +1,4 @@
-package spin-glass;
+package spin_glass;
 
 /** Object with fields and methods for a spin.
  *  @author Andrew Berger*/

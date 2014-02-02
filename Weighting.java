@@ -1,4 +1,4 @@
-package spin-glass;
+package spin_glass;
 
 /** The weighting between two possibly distinct Lattices
  *  @author Andrew Berger */

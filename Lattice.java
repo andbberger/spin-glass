@@ -144,7 +144,13 @@ abstract class Lattice {
         energySet = true;
         return e;
     }
-
+    
+    /** Sets my spins to X and returns my energy.*/
+    public double getEnergy(State x) {
+        setSpins(x);
+        return energy();
+    }
+    
     /** Returns the derivative of the Energy with respect
      *  To weight i j.
      *  In the case of the boltzmann machine this takes the very simple
@@ -169,6 +175,49 @@ abstract class Lattice {
     public void updateWeights(double[][] gradient) {
         _weights.gradientDescent(gradient, EPS);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     /** Probabilistic spin updater.
      *  Has a probability to settle into a higher energy state,
