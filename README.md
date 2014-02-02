@@ -16,3 +16,5 @@ In the works:
    -Minimum Probability Flow learning
    
    -Class for managing and constructing networks
+
+   -Swendsen-Wang sampling 
