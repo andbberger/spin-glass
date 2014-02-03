@@ -74,6 +74,14 @@ abstract class Lattice {
         }
     }
 
+    /** Returns the probability of forming a bond between I,J
+     *  Namely, 1 - exp(-J_ij*S_I*S_J/ kb * T) */
+    public double pbond(State xcurr, int i, int j) {
+        setSpins(xcurr);
+        double J = _weights.get(i, j) * getSpin(i) * getSpin(j);
+        return 1 - Math.exp(-J/_temperature); 
+    }
+
     /** Constructs a long representing the lattice state.
      *  Not a very good hash,important property is that 
      *   one spin flip will always produce a different number.*/

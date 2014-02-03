@@ -32,11 +32,10 @@ public class State {
         return _state.size();
     }
 
-    /** Returns the Ith spin*/
+    /** Returns the spin indexed at i */
     public boolean getSpin(int i) {
         return _state.get(i);
     }
-
     
     /** Indexed by LSD */
     private BitSet _state;
