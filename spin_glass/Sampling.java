@@ -2,6 +2,7 @@ package spin_glass;
     
 import java.util.Random;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /** Class containing Swendsen-Wang sampling with utility methods
  *  @author Andrew Berger */
@@ -41,7 +42,21 @@ public class Sampling {
 
     /** Picks a state according to Swendsen-Wang algorithm */
     private State pickState(State xcurr) {
-        return null;
+        updateBonds(xcurr);
+        hoshenkopelman();
+        int x = _rand.nextInt((int) _dim);
+        int y = _rand.nextInt((int) _dim);
+        State xnew = flipRegion(xcurr, _labels[x][y]);
+        return xnew;
+    }
+                                
+    /** Flips all of the bits in REGION and returns that state.*/
+    private State flipRegion(State xcurr, int region) {
+        State xnew = new State(xcurr);
+        for (int[] coord : _regions.get(region)) {
+            xnew.flip(sqNum(coord[0], coord[1]));
+        }
+        return xnew;
     }
     
     /** Core routine of Swendsen-Wang. Updates the bond matrix
@@ -71,7 +86,7 @@ public class Sampling {
                             break coord;
                         }
                     }
-                    pb = _glass.pbond(xcurr, mapSquaredCoords(i, j), mapSquaredCoords(x, y));
+                    pb = _glass.pbond(xcurr, sqNum(i, j), sqNum(x, y));
                     if (pb > 1) {
                         break coord;
                     } else if(_rand.nextDouble() < pb) {
@@ -118,6 +133,18 @@ public class Sampling {
         
     }
 
+    /** Fills the _regions for easy region selection.*/
+    private void mapRegions() {
+        _regions = new ArrayList<HashSet<int[]>>();
+        for (int x = 0; x < (int)(_dim); x++) {
+            for (int y = 0; y < (int)(_dim); y++) {
+                if (x + y % 2 != 0) {
+                    _regions.get(_labels[x][y]).add(new int[]{x, y});
+                }
+            }
+        }
+    }
+
     /** Returns the smallest equivalent label. */
     private int find(int x) {
         int r = x;
@@ -138,10 +165,12 @@ public class Sampling {
     }
 
     /** Returns a mapping from Z^2 to Z^1*/
-    private int mapSquaredCoords(int i, int j) {
+    private int sqNum(int i, int j) {
         return (int)(i*_dim) + j;
     }
 
+
+    private ArrayList<HashSet<int[]>> _regions;
     private int _maxLabel;
     private int[][] _labels;
     private int[] _labelLinks;

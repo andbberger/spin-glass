@@ -11,6 +11,9 @@ public class State {
         _state = state; 
     }
 
+    State(State state) {
+        _state = state.getState();
+    }
 
     public State[] generateBitFlips () { 
         State[] bitFlips = new State[size()];
@@ -35,6 +38,11 @@ public class State {
     /** Returns the spin indexed at i */
     public boolean getSpin(int i) {
         return _state.get(i);
+    }
+
+    /** Flips the spin at i. */
+    public void flip(int i) {
+        _state.flip(i);
     }
     
     /** Indexed by LSD */
