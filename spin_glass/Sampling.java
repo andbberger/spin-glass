@@ -16,7 +16,7 @@ public class Sampling {
         if (_dim != Math.floor(_dim)) {
             throw new StateException();
         }
-        _bonds = new boolean[(int)(2*_dim) - 1][(int)(2*_dim) - 1];
+        _bonds = new boolean[(int)(2 * _dim) - 1][(int)(2 * _dim) - 1];
     }
 
     /** Returns the non-normalized probability of realizing state X.*/
@@ -39,7 +39,7 @@ public class Sampling {
         }
     }
 
-    /** Picks a spin at random and flips all contiguous spins. */
+    /** Picks a state according to Swendsen-Wang algorithm */
     private State pickState(State xcurr) {
         return null;
     }
@@ -84,12 +84,67 @@ public class Sampling {
         }
     }
 
+    /** Runs the Hoshen-Kopelman algorithm to find the largest contiguous regions*/
+    private void hoshenkopelman() {
+        _maxLabel = 0;
+        _labelLinks = new int[(int)(_dim * _dim)];
+        _labels = new int[(int)(2 * _dim) - 1][(int)(2 * _dim) - 1];
+        boolean left, aboveLeft;
+        for (int x = 0; x < (int)(_dim); x++) {
+            for (int y = 0; y < (int)(_dim); y++) {
+                if (x + y % 2 != 0 && _bonds[x][y] == true) {
+                    left = false;
+                    aboveLeft = false;
+                    if (x > 1) {
+                        left = _bonds[x - 2][y];
+                    }
+                    if (y > 1 && x > 0) {
+                        aboveLeft = _bonds[x - 1][y - 1];
+                    }
+                    if (!left && !aboveLeft) {
+                        _maxLabel += 1;
+                        _labels[x][y] = _maxLabel;
+                    } else if (left && !aboveLeft) {
+                        _labels[x][y] = find(_labels[x - 2][y]);
+                    } else if (!left && aboveLeft) {
+                        _labels[x][y] = find(_labels[x - 1][y - 1]);
+                    } else {
+                        union(_labels[x - 2][y], _labels[x - 1][y - 1]);
+                        _labels[x][y] = find(_labels[x - 2][y]);
+                    }
+                }
+            }
+        }
+        
+    }
+
+    /** Returns the smallest equivalent label. */
+    private int find(int x) {
+        int r = x;
+        while (_labelLinks[r] != r) {
+            r = _labelLinks[r];
+        }
+        while (_labelLinks[x] != x) {
+            int q = _labelLinks[x];
+            _labelLinks[x] = r;
+            x = q;
+        }
+        return r;
+    }
+
+    /** Makes label x and y equivalent.*/
+    private void union(int x, int y) {
+        _labelLinks[find(x)] = find(y);
+    }
 
     /** Returns a mapping from Z^2 to Z^1*/
     private int mapSquaredCoords(int i, int j) {
         return (int)(i*_dim) + j;
     }
-    
+
+    private int _maxLabel;
+    private int[][] _labels;
+    private int[] _labelLinks;
     private boolean[][] _bonds;
     private double _dim;
     private Lattice _glass;
